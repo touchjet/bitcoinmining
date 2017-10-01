@@ -1,0 +1,275 @@
+#include "fb1600.h"
+#include "stm32f10x.h"
+#include "led.h"
+#include "testdata.h"
+#include "power.h"
+
+#define Low     0x00  /* Chip Select line low */
+#define High    0x01  /* Chip Select line high */
+
+#define SPIA_PORT   GPIOA
+#define SPIB_PORT   GPIOB
+
+#define CS_PORT     GPIOD
+#define CS_EN_PORT  GPIOA
+#define RST_PORT    GPIOD
+
+#define IRQA_PORT   GPIOE
+#define IRQB_PORT   GPIOC
+
+uint8_t COMMAND[45] = {
+  0x00,
+  0x00,0x01,                                            //PLL Setup
+  0xff,0xff,0xff,0x7f,                                  //Difficulty
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,    //Reserved
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
+};
+
+volatile uint8_t ChipStats[8];
+volatile uint8_t RxBuffer[45];
+
+__inline void FB1600_Delay(uint16_t ms)
+{
+  volatile uint16_t j,k;
+  for (j=0;j<ms;j++)
+    for (k=0;k<1000;k++)
+      ;
+}
+
+void FB1600_Init()
+{
+  SPI_InitTypeDef  SPI_InitStructure;
+  GPIO_InitTypeDef GPIO_InitStructure;
+  
+  /* Enable SPI and GPIO clocks */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1 | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE, ENABLE);
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+  
+  /* Configure SPIA pins: SCK, MISO and MOSI */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+  GPIO_Init(SPIA_PORT, &GPIO_InitStructure);
+
+  /* Configure SPIB pins: SCK, MISO and MOSI */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+  GPIO_Init(SPIB_PORT, &GPIO_InitStructure);
+
+  /* Configure Reset as Output push-pull */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(RST_PORT, &GPIO_InitStructure);
+  GPIO_SetBits(RST_PORT, GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15);
+  
+  /* Configure CS as Output push-pull */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(CS_PORT, &GPIO_InitStructure);
+  GPIO_SetBits(CS_PORT, GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7);
+
+  /* Configure CS_EN as Output push-pull */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_2;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(CS_EN_PORT, &GPIO_InitStructure);
+  GPIO_SetBits(CS_EN_PORT, GPIO_Pin_1 | GPIO_Pin_2);
+
+  /* Configure Irq as Input with PullDown */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+  GPIO_Init(IRQA_PORT, &GPIO_InitStructure);
+  GPIO_Init(IRQB_PORT, &GPIO_InitStructure);
+
+
+  /* SPI configuration */ 
+  SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+  SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+  SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+  SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
+  SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
+  SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+//  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
+  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
+  SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+  SPI_InitStructure.SPI_CRCPolynomial = 7;
+  SPI_Init(SPI1, &SPI_InitStructure);
+  SPI_Init(SPI2, &SPI_InitStructure);
+  
+  /* Enable SPIA  */
+  SPI_Cmd(SPI1, ENABLE);
+  /* Enable SPIB  */
+  SPI_Cmd(SPI2, ENABLE);
+}
+
+void FB1600_CS(uint8_t core, uint8_t level)
+{	
+	uint16_t cs_setter;
+	if (level == Low) {
+		if (core < 16) {
+			cs_setter = core;
+		} else {
+			cs_setter = (core - 16) << 4;
+		}
+		if (cs_setter != 0){	
+			GPIO_SetBits(CS_PORT,cs_setter);
+		}
+		if (core < 16) {
+			GPIO_ResetBits(CS_EN_PORT, GPIO_Pin_1);
+		} else {
+			GPIO_ResetBits(CS_EN_PORT, GPIO_Pin_2);
+		}
+	} else {
+		if (core < 16) {
+			GPIO_SetBits(CS_EN_PORT, GPIO_Pin_1);
+			GPIO_ResetBits(CS_PORT,GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3);
+		} else {
+			GPIO_SetBits(CS_EN_PORT, GPIO_Pin_2);
+			GPIO_ResetBits(CS_PORT,GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7);
+		}	
+	}	
+}
+
+void FB1600_RST(uint8_t core, uint8_t level)
+{
+	uint16_t rst_mask;
+	rst_mask = ((uint16_t)0x0001) << ((core >> 2)+8);
+	if (level == Low) {
+		GPIO_ResetBits(RST_PORT, rst_mask);
+	} else {
+		GPIO_SetBits(RST_PORT, rst_mask);
+	}
+}
+
+uint8_t FB1600_Reset(uint8_t core,uint8_t pll,uint32_t difficulty)
+{
+  uint16_t ptr = 1;
+  uint32_t diff = 0xffffffff;
+//  uint16_t result_base = 6 + ((core % 4) * 5) ;
+//  uint16_t config_ok = 0;
+//  uint16_t core_ok = 0;
+ if ((core % 4) == 0) {
+    COMMAND[1] = pll << 1;
+    COMMAND[2] = 0xa1;
+    while (ptr < difficulty) {
+      diff >>=1;
+      ptr <<= 1;
+    }
+    COMMAND[3] = diff & 0x000000ff;
+    COMMAND[4] = (diff & 0x0000ff00) >> 8; 
+    COMMAND[5] = (diff & 0x00ff0000) >> 16; 
+    COMMAND[6] = (diff & 0xff000000) >> 24; 
+
+    FB1600_RST(core,Low);
+    FB1600_Delay(10);
+    FB1600_Comm(core,COMMAND);
+    FB1600_Delay(10);
+    FB1600_RST(core,High);
+    FB1600_Delay(100);
+
+    FB1600_RST(core,Low);
+    FB1600_Delay(10);
+    FB1600_Comm(core,COMMAND);
+    FB1600_Delay(10);
+    FB1600_RST(core,High);
+    FB1600_Delay(100);
+  }
+
+  FB1600_Comm(core,(uint8_t *)HASH_DATA[0]);
+  FB1600_Delay(1);
+  if ((RxBuffer[2] == COMMAND[3]) &&  (RxBuffer[3] == COMMAND[4]) &&
+     (RxBuffer[4] == COMMAND[5]) &&  (RxBuffer[5] == COMMAND[6])) {
+ 	ChipStats[core >> 2] |= 1 << (core % 4);
+ 	return 1;
+ } else {
+	ChipStats[core >> 2] &= ~(1 << (core % 4));
+  }
+  return 0;
+/*
+  for (ptr=0;ptr<9;ptr++) {
+    FB1600_Comm(core,(uint8_t *)HASH_DATA[ptr]);
+    FB1600_Delay(1);
+	if (ptr == 0) {
+	  if ((RxBuffer[2] == COMMAND[3]) &&  (RxBuffer[3] == COMMAND[4]) &&
+         (RxBuffer[4] == COMMAND[5]) &&  (RxBuffer[5] == COMMAND[6])) {
+		config_ok = 1;
+        if (difficulty != 1) {
+		  ChipStats[core >> 2] |= 1 << (core % 4);
+	  	  return 1;
+		}
+	  } else {
+		  ChipStats[core >> 2] &= ~(1 << (core % 4));
+	     return 0;
+	  }
+	} else {
+	  if ( (RxBuffer[result_base+1] == HASH_DATA[ptr-1][45]) && (RxBuffer[result_base+2] == HASH_DATA[ptr-1][46]) && 
+	       	(RxBuffer[result_base+3] == HASH_DATA[ptr-1][47]) && (RxBuffer[result_base+4] == HASH_DATA[ptr-1][48]) ) {
+	  	core_ok ++;
+	  }
+	}
+  }
+  if ((config_ok == 1) &&(core_ok > 6)) {
+	ChipStats[core >> 2] |= 1 << (core % 4);
+	return 1;
+  } else {
+    ChipStats[core >> 2] &= ~(1 << (core % 4));
+	return 0;
+  }
+*/
+}
+
+uint8_t FB1600_Ready(uint8_t core)
+{
+  uint16_t irq_pin;
+  uint8_t result;
+  if (core < 16) {
+  	irq_pin = ((uint16_t)0x0001) << core;
+	result = (IRQA_PORT->IDR & irq_pin) != Bit_RESET;
+//	return GPIO_ReadInputDataBit(IRQA_PORT,irq_pin)==Bit_SET;
+  } else {
+  	irq_pin = ((uint16_t)0x0001) << (core-16);
+	result = (IRQB_PORT->IDR & irq_pin) != Bit_RESET;
+//	return GPIO_ReadInputDataBit(IRQB_PORT,irq_pin)==Bit_SET;
+  }
+  if (result) {
+    ChipStats[core >> 2] |= 1 << ((core % 4)+4);
+	return 1;
+  } else {
+    ChipStats[core >> 2] &= ~(1 << ((core % 4)+4));
+    return 0;
+  }
+}
+
+void FB1600_Comm(uint8_t core, uint8_t *sendbuffer)
+{
+  uint16_t i;
+  uint8_t *tx = sendbuffer;
+  LED_CHIP_ON;
+  FB1600_CS(core,Low);
+  FB1600_Delay(1);
+  for (i=0;i<45;i++)
+  {
+	if (core < 16) {
+      while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
+      SPI_I2S_SendData(SPI1, *tx);
+      tx++;
+      while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
+      RxBuffer[i] = SPI_I2S_ReceiveData(SPI1);
+	} else {
+      while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+      SPI_I2S_SendData(SPI2, *tx);
+      tx++;
+      while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_RXNE) == RESET);
+      RxBuffer[i] = SPI_I2S_ReceiveData(SPI2);
+	}
+  }
+  FB1600_Delay(1);
+  FB1600_CS(core,High);
+  LED_CHIP_OFF;
+}
+

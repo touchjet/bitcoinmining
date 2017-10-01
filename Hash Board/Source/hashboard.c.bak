@@ -1,0 +1,51 @@
+#include <string.h>
+#include "stm32f10x.h"
+#include "uart.h"
+#include "parcel.h"
+#include "workpool.h"
+#include "fb1600.h"
+#include "power.h"
+#include "led.h"
+
+int main()
+{
+
+    // Disable JTAG
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);
+
+    SysTick_Config(72000000 / 10000); //10ms
+	LED_Init();
+	POWER_Init();
+    FB1600_Init();
+    Parcel_Init();
+    Pool_Init(20,1);
+    UART_Init(115200);
+
+    while(1) {
+	  ParcelWork();
+      Pool_Task();
+    }
+}
+
+
+#ifdef USE_FULL_ASSERT
+/*******************************************************************************
+ * Function Name  : assert_failed
+ * Description    : Reports the name of the source file and the source line number
+ *                  where the assert_param error has occurred.
+ * Input          : - file: pointer to the source file name
+ *                  - line: assert_param error line source number
+ * Output         : None
+ * Return         : None
+ *******************************************************************************/
+void assert_failed(uint8_t* file, uint32_t line)
+{
+    /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+    /* Infinite loop */
+    while (1)
+    {}
+}
+#endif
+

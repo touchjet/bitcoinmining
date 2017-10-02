@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5C1D5AF6-0B3D-4D2D-B876-6C6840D3AE27}</ProjectGuid>
+    <ProjectTypeGuids>{349C5851-65DF-11DA-9384-00065B846F21};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>fusiondash</RootNamespace>
+    <AssemblyName>fusiondash</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <ReleaseVersion>0.2</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="Thrift">
+      <HintPath>..\thirdpartylibraries\Thrift.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Global.asax" />
+    <Content Include="web.config" />
+    <Content Include="Default.aspx" />
+    <Content Include="Logon.aspx" />
+    <Content Include="Details.aspx" />
+    <Content Include="Restarting.aspx" />
+    <Content Include="css\login.css" />
+    <Content Include="css\master.css" />
+    <Content Include="css\ad.css" />
+    <Content Include="css\grid.css" />
+    <Content Include="css\reset.css" />
+    <Content Include="css\tables.css" />
+    <Content Include="img\bkg-pat.png" />
+    <Content Include="img\grad-overlay-hz.png" />
+    <Content Include="img\grad-overlay-s.png" />
+    <Content Include="img\grad-overlay.png" />
+    <Content Include="img\login-bg.jpg" />
+    <Content Include="img\login-sprite.png" />
+    <Content Include="img\separator-dark-hz.png" />
+    <Content Include="img\slider-handle.png" />
+    <Content Include="img\slider-hz.png" />
+    <Content Include="img\slider-vt.png" />
+    <Content Include="img\nav\anlt-active.png" />
+    <Content Include="img\nav\dash-active.png" />
+    <Content Include="img\ui\close.png" />
+    <Content Include="img\ui\notif-bg.jpg" />
+    <Content Include="img\ui\overlay.png" />
+    <Content Include="img\ui\pbar.png" />
+    <Content Include="img\ui\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="img\ui\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="img\ui\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="img\ui\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="img\ui\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="img\ui\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="img\ui\ui-icons_222222_256x240.png" />
+    <Content Include="img\ui\ui-icons_2e83ff_256x240.png" />
+    <Content Include="img\ui\ui-icons_454545_256x240.png" />
+    <Content Include="img\ui\ui-icons_888888_256x240.png" />
+    <Content Include="img\ui\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="css\icons.css" />
+    <Content Include="img\nav\grid-active.png" />
+    <Content Include="ShowAll.aspx" />
+    <Content Include="BatchChange.aspx" />
+    <Content Include="img\nav\batch-active.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MinerInterface.cs" />
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\BoardStatus.cs">
+      <Link>Thrift\BoardStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\ChipStatus.cs">
+      <Link>Thrift\ChipStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\CoreStatus.cs">
+      <Link>Thrift\CoreStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HardwareConfig.cs">
+      <Link>Thrift\HardwareConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HardwareStatus.cs">
+      <Link>Thrift\HardwareStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HardwareType.cs">
+      <Link>Thrift\HardwareType.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HostService.cs">
+      <Link>Thrift\HostService.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MaintStep.cs">
+      <Link>Thrift\MaintStep.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MaintStepType.cs">
+      <Link>Thrift\MaintStepType.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\Maintenance.cs">
+      <Link>Thrift\Maintenance.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerConfig.cs">
+      <Link>Thrift\MinerConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerDetail.cs">
+      <Link>Thrift\MinerDetail.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerInfo.cs">
+      <Link>Thrift\MinerInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerModel.cs">
+      <Link>Thrift\MinerModel.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerService.cs">
+      <Link>Thrift\MinerService.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerStatus.cs">
+      <Link>Thrift\MinerStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\NetworkConfig.cs">
+      <Link>Thrift\NetworkConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolConfig.cs">
+      <Link>Thrift\PoolConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolStatus.cs">
+      <Link>Thrift\PoolStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolStrategyType.cs">
+      <Link>Thrift\PoolStrategyType.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolType.cs">
+      <Link>Thrift\PoolType.cs</Link>
+    </Compile>
+    <Compile Include="Logon.aspx.cs">
+      <DependentUpon>Logon.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Logon.aspx.designer.cs">
+      <DependentUpon>Logon.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Details.aspx.cs">
+      <DependentUpon>Details.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Details.aspx.designer.cs">
+      <DependentUpon>Details.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Restarting.aspx.cs">
+      <DependentUpon>Restarting.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Restarting.aspx.designer.cs">
+      <DependentUpon>Restarting.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ShowAll.aspx.cs">
+      <DependentUpon>ShowAll.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ShowAll.aspx.designer.cs">
+      <DependentUpon>ShowAll.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerHostStatus.cs">
+      <Link>Thrift\MinerHostStatus.cs</Link>
+    </Compile>
+    <Compile Include="BatchChange.aspx.cs">
+      <DependentUpon>BatchChange.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="BatchChange.aspx.designer.cs">
+      <DependentUpon>BatchChange.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MinerSearch.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <XspParameters Port="8080" Address="127.0.0.1" SslMode="None" SslProtocol="Default" KeyType="None" CertFile="" KeyFile="" PasswordOptions="None" Password="" Verbose="True" />
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="Thrift\" />
+    <Folder Include="css\" />
+    <Folder Include="img\" />
+  </ItemGroup>
+</Project>

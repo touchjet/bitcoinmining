@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{E89FF5C6-B47D-46EC-BCC7-397D29649D97}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>FusionMiner</RootNamespace>
+    <AssemblyName>fusionminer</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <ReleaseVersion>0.2</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Thrift">
+      <HintPath>..\thirdpartylibraries\Thrift.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\thirdpartylibraries\ServiceStack.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="RaspberryPiDotNet">
+      <HintPath>..\thirdpartylibraries\RaspberryPiDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.2\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Driver\FDriver.cs" />
+    <Compile Include="MinerData\HashData.cs" />
+    <Compile Include="MiningPool\MiningPool.cs" />
+    <Compile Include="MiningPool\TestDataPool.cs" />
+    <Compile Include="Utility\Utility.cs" />
+    <Compile Include="Utility\Sha256Lib.cs" />
+    <Compile Include="MiningPool\StratumPool.cs" />
+    <Compile Include="MiningController.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Utility\Aes.cs" />
+    <Compile Include="Utility\SHA256Extended.cs" />
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HostService.cs">
+      <Link>Thrift\HostService.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\Maintenance.cs">
+      <Link>Thrift\Maintenance.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerInfo.cs">
+      <Link>Thrift\MinerInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerModel.cs">
+      <Link>Thrift\MinerModel.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerStatus.cs">
+      <Link>Thrift\MinerStatus.cs</Link>
+    </Compile>
+    <Compile Include="HostInterface.cs" />
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MaintStep.cs">
+      <Link>Thrift\MaintStep.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MaintStepType.cs">
+      <Link>Thrift\MaintStepType.cs</Link>
+    </Compile>
+    <Compile Include="Utility\ProgramLauncher.cs" />
+    <Compile Include="Driver\DigBigSPIDriver.cs" />
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\BoardStatus.cs">
+      <Link>Thrift\BoardStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\ChipStatus.cs">
+      <Link>Thrift\ChipStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\CoreStatus.cs">
+      <Link>Thrift\CoreStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HardwareConfig.cs">
+      <Link>Thrift\HardwareConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HardwareStatus.cs">
+      <Link>Thrift\HardwareStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HardwareType.cs">
+      <Link>Thrift\HardwareType.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerConfig.cs">
+      <Link>Thrift\MinerConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerService.cs">
+      <Link>Thrift\MinerService.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolConfig.cs">
+      <Link>Thrift\PoolConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolStrategyType.cs">
+      <Link>Thrift\PoolStrategyType.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolType.cs">
+      <Link>Thrift\PoolType.cs</Link>
+    </Compile>
+    <Compile Include="MinerServiceHandler.cs" />
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerDetail.cs">
+      <Link>Thrift\MinerDetail.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolStatus.cs">
+      <Link>Thrift\PoolStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\NetworkConfig.cs">
+      <Link>Thrift\NetworkConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerHostStatus.cs">
+      <Link>Thrift\MinerHostStatus.cs</Link>
+    </Compile>
+    <Compile Include="Driver\DigBigSPIV2Driver.cs" />
+    <Compile Include="HostApiClient.cs" />
+    <Compile Include="Model\MinerDTO.cs" />
+    <Compile Include="Model\MinerStatDTO.cs" />
+    <Compile Include="Model\MinerConfigDTO.cs" />
+    <Compile Include="Model\MinerMaintPackDTO.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Driver\" />
+    <Folder Include="MinerData\" />
+    <Folder Include="MiningPool\" />
+    <Folder Include="Utility\" />
+    <Folder Include="Thrift\" />
+    <Folder Include="Model\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="..\thrift\FusionMiner.thrift">
+      <Link>Thrift\FusionMiner.thrift</Link>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

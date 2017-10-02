@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{774510D2-329C-421F-B648-E1E495621C7B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>fusionutil</RootNamespace>
+    <AssemblyName>fusionutil</AssemblyName>
+    <ReleaseVersion>0.2</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="DiffieHellman">
+      <HintPath>..\thirdpartylibraries\DiffieHellman.dll</HintPath>
+    </Reference>
+    <Reference Include="FSM.DotNetSSH">
+      <HintPath>..\thirdpartylibraries\FSM.DotNetSSH.dll</HintPath>
+    </Reference>
+    <Reference Include="Org.Mentalis.Security">
+      <HintPath>..\thirdpartylibraries\Org.Mentalis.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Thrift">
+      <HintPath>..\thirdpartylibraries\Thrift.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MinerUpgrade.cs" />
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\BoardStatus.cs">
+      <Link>Thrift\BoardStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\ChipStatus.cs">
+      <Link>Thrift\ChipStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\CoreStatus.cs">
+      <Link>Thrift\CoreStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HardwareConfig.cs">
+      <Link>Thrift\HardwareConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HardwareStatus.cs">
+      <Link>Thrift\HardwareStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HardwareType.cs">
+      <Link>Thrift\HardwareType.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\HostService.cs">
+      <Link>Thrift\HostService.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MaintStep.cs">
+      <Link>Thrift\MaintStep.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MaintStepType.cs">
+      <Link>Thrift\MaintStepType.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\Maintenance.cs">
+      <Link>Thrift\Maintenance.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerConfig.cs">
+      <Link>Thrift\MinerConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerDetail.cs">
+      <Link>Thrift\MinerDetail.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerHostStatus.cs">
+      <Link>Thrift\MinerHostStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerInfo.cs">
+      <Link>Thrift\MinerInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerModel.cs">
+      <Link>Thrift\MinerModel.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerService.cs">
+      <Link>Thrift\MinerService.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\MinerStatus.cs">
+      <Link>Thrift\MinerStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\NetworkConfig.cs">
+      <Link>Thrift\NetworkConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolConfig.cs">
+      <Link>Thrift\PoolConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolStatus.cs">
+      <Link>Thrift\PoolStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolStrategyType.cs">
+      <Link>Thrift\PoolStrategyType.cs</Link>
+    </Compile>
+    <Compile Include="..\thrift\gen-csharp\FusionMiner\Thrift\PoolType.cs">
+      <Link>Thrift\PoolType.cs</Link>
+    </Compile>
+    <Compile Include="SimpleMinerIntf.cs" />
+    <Compile Include="..\fusionminer\Utility\Utility.cs">
+      <Link>Utility.cs</Link>
+    </Compile>
+    <Compile Include="..\fusionminer\Utility\ProgramLauncher.cs">
+      <Link>ProgramLauncher.cs</Link>
+    </Compile>
+    <Compile Include="MinerList.cs" />
+    <Compile Include="..\fusiondash\MinerInterface.cs">
+      <Link>MinerInterface.cs</Link>
+    </Compile>
+    <Compile Include="..\fusiondash\MinerSearch.cs">
+      <Link>MinerSearch.cs</Link>
+    </Compile>
+    <Compile Include="MinerReboot.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Thrift\" />
+  </ItemGroup>
+</Project>
